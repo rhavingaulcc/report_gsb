@@ -35,14 +35,14 @@ function objectToArray($select) {
 		}
 	}
 	
-$sql = "SELECT {block_gsb_content}.id, {course_categories}.name as category, {course}.fullname as coursename, {course}.shortname, {block_gsb_content}.linksnum, {block_gsb_content}.assignmentnum, 
-		{block_gsb_content}.feedbacknum, {block_gsb_content}.questnum, {block_gsb_content}.quiznum, {block_gsb_content}.interactnum as interactive_learning_objects, {block_gsb_content}.embednum as embedded_videos, 
-		{block_gsb_content}.booknum, {block_gsb_content}.databasenum, {block_gsb_content}.workshopnum, {block_gsb_content}.choicenum, {block_gsb_content}.glossarynum, 
-		{block_gsb_content}.wikinum, {block_gsb_content}.chatnum, {block_gsb_content}.forumnum, {block_gsb_content}.gsb 
-		FROM ({block_gsb_content} INNER JOIN {course} ON {block_gsb_content}.ids = {course}.id) INNER JOIN {course_categories} ON {course}.category = {course_categories}.id
+$sql = "SELECT {block_gsb}.id, {course_categories}.name as category, {course}.fullname as coursename, {course}.shortname, {block_gsb}.linksnum, {block_gsb}.assignmentnum, 
+		{block_gsb}.feedbacknum, {block_gsb}.questnum, {block_gsb}.quiznum, {block_gsb}.interactnum as interactive_learning_objects, {block_gsb}.embednum as embedded_videos, 
+		{block_gsb}.booknum, {block_gsb}.databasenum, {block_gsb}.workshopnum, {block_gsb}.choicenum, {block_gsb}.glossarynum, 
+		{block_gsb}.wikinum, {block_gsb}.chatnum, {block_gsb}.forumnum, {block_gsb}.gsb 
+		FROM ({block_gsb} INNER JOIN {course} ON {block_gsb}.ids = {course}.id) INNER JOIN {course_categories} ON {course}.category = {course_categories}.id
 		ORDER by name ASC;"; 
 		
-//		Modification removal from $sql to satisfy SQL SERVER GROUP BY {block_gsb_content}.id		
+//		Modification removal from $sql to satisfy SQL SERVER GROUP BY {block_gsb}.id		
 $select = $DB->get_records_sql($sql);
 
 $array = objectToArray($select);	

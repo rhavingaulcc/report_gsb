@@ -165,7 +165,7 @@ echo "</br>";
 foreach($getcourseids as $row => $values) {
 
 	$courseid1 = $values->id;
-	$table = "block_gsb_content";
+	$table = "block_gsb";
 	$conditions = array('ids'=>"$courseid1");
 	$test = $DB->record_exists($table, $conditions); 
 
@@ -191,7 +191,7 @@ foreach($getcourseids as $row => $values) {
 		$record->gsb = "";
 		$record->gsboverride = "no";
 		$record->enrolnum = 0;
-		$insert_gsb_row = $DB->insert_record('block_gsb_content', $record);		
+		$insert_gsb_row = $DB->insert_record('block_gsb', $record);		
 
 	}
 }
@@ -215,8 +215,8 @@ echo"<table border='1' cellspacing='0' cellpadding='2' width='100%'>
 			<td bgcolor='#C0C0C0' width='120'><b><font face='Arial' size='3'>Manual Medal</b></font></b></td>
 		</tr>";
 	
-$sql = "SELECT {block_gsb_content}.id AS gb, {course}.id, {course}.shortname, {course}.fullname, {block_gsb_content}.gsb, {block_gsb_content}.enrolnum, {block_gsb_content}.gsboverride
-		FROM  {course} INNER JOIN {block_gsb_content} ON {course}.id = {block_gsb_content}.ids
+$sql = "SELECT {block_gsb}.id AS gb, {course}.id, {course}.shortname, {course}.fullname, {block_gsb}.gsb, {block_gsb}.enrolnum, {block_gsb}.gsboverride
+		FROM  {course} INNER JOIN {block_gsb} ON {course}.id = {block_gsb}.ids
 		WHERE ((({course}.category)=$categoryid))
 		ORDER BY {course}.id;";
 		
@@ -251,8 +251,8 @@ foreach($get_dept_codes as $row => $values) {
 
 		$updgsb->id = $gsbid;
 		$updgsb->enrolnum = $enrolnum;
-		if ($DB->record_exists('block_gsb_content', array('id' => $updgsb->id))) {
-		$DB->update_record('block_gsb_content', $updgsb); 
+		if ($DB->record_exists('block_gsb', array('id' => $updgsb->id))) {
+		$DB->update_record('block_gsb', $updgsb); 
 		}
  
 
@@ -400,9 +400,9 @@ foreach($get_dept_codes as $row => $values) {
 	
 	//TODO: Add button to process all Medals onto index.php in report. 
 	//Change images of medals to look more professional
-	if ($DB->record_exists('block_gsb_content', array('id' => $updgsb->id))) {
+	if ($DB->record_exists('block_gsb', array('id' => $updgsb->id))) {
 	
-		$DB->update_record('block_gsb_content', $updgsb); 
+		$DB->update_record('block_gsb', $updgsb); 
 		
 	} 	
 

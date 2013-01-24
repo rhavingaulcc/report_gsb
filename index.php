@@ -64,7 +64,7 @@ if($config->subcategories == 0) {
 if (ISSET($submitted)) {
 
 	$sql = "SELECT c.id, g.gsboverride 
-	FROM {course}, {block_gsb_content} g JOIN {course} c ON c.id = g.ids 
+	FROM {course}, {block_gsb} g JOIN {course} c ON c.id = g.ids 
 	WHERE {course}.category = " . $categoryid . " ";
 	$get_dept_codes = $DB->get_records_sql($sql);
 
@@ -107,8 +107,8 @@ if (ISSET($submitted)) {
 					$updgsb->id = $gsbid;
 					$updgsb->gsb = $finalgsb;
 					$updgsb->gsboverride = 'no';
-					if ($DB->record_exists('block_gsb_content', array('id' => $updgsb->id))) {
-						$DB->update_record('block_gsb_content', $updgsb); 
+					if ($DB->record_exists('block_gsb', array('id' => $updgsb->id))) {
+						$DB->update_record('block_gsb', $updgsb); 
 					} 
 					break;
 				
@@ -117,8 +117,8 @@ if (ISSET($submitted)) {
 					$updgsb->id = $gsbid;
 					$updgsb->gsb = $finalgsb;
 					$updgsb->gsboverride = 'yes';
-					if ($DB->record_exists('block_gsb_content', array('id' => $updgsb->id))) {
-						$DB->update_record('block_gsb_content', $updgsb); 
+					if ($DB->record_exists('block_gsb', array('id' => $updgsb->id))) {
+						$DB->update_record('block_gsb', $updgsb); 
 					} 
 					break;
 				
@@ -127,8 +127,8 @@ if (ISSET($submitted)) {
 					$updgsb->id = $gsbid;
 					$updgsb->gsb = $finalgsb;
 					$updgsb->gsboverride = 'yes';
-					if ($DB->record_exists('block_gsb_content', array('id' => $updgsb->id))) {
-						$DB->update_record('block_gsb_content', $updgsb); 
+					if ($DB->record_exists('block_gsb', array('id' => $updgsb->id))) {
+						$DB->update_record('block_gsb', $updgsb); 
 					} 
 					break;
 			}
@@ -187,9 +187,9 @@ if($config->subcategories == '1') {
 
 $total = count($totalcourses);
 
-$gold_total = $DB->count_records('block_gsb_content', array('gsb'=>'Gold'));
-$silver_total = $DB->count_records('block_gsb_content', array('gsb'=>'Silver'));
-$bronze_total = $DB->count_records('block_gsb_content', array('gsb'=>'Bronze'));		
+$gold_total = $DB->count_records('block_gsb', array('gsb'=>'Gold'));
+$silver_total = $DB->count_records('block_gsb', array('gsb'=>'Silver'));
+$bronze_total = $DB->count_records('block_gsb', array('gsb'=>'Bronze'));		
 
 $total_medals = $gold_total + $silver_total + $bronze_total;				
 $indev_count = $total - $total_medals ;
