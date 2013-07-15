@@ -19,7 +19,7 @@
  *
  * @package    report
  * @subpackage GSB
- * @copyright  2012 onwards Richard Havinga richard.havinga@southampton-city.ac.uk
+ * @copyright  2013 onwards Richard Havinga 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
  
@@ -40,7 +40,7 @@ admin_externalpage_setup('report_gsb');
 echo $OUTPUT->header().
      $OUTPUT->heading(get_string('gsbadmin', 'report_gsb'));
 
-$config = get_config('gsb'); 
+$config = get_config('gsb');
 
  if(isset($_POST['categoryid'])) {
 	$submitted = $_POST['submit2'];
@@ -49,17 +49,6 @@ $config = get_config('gsb');
 	$categoryid = $_POST['categoryid'];
 }
 
-//Clean up course medals where a course has been deleted
-gsb_cleanup_medals();
-	
-	
-//Remove any previously awarded Sub category medals if sub categories are disabled. 
-if($config->subcategories == 0) {
-
-	gsb_subcat_cleanup();
-
-}
-	
 	//Once medals are set from gsb_by_department.php
 if (ISSET($submitted)) {
 
@@ -166,35 +155,42 @@ foreach ($get_dept_codes as $record => $value) {
 
 echo "</select></p><p><input type='submit' value='Submit' name='submit'></p></form>";
 $enrolments = $config->minenrolments;
-	
+list ($insql, $params) = $DB->get_in_or_equal(explode(',', $config->studentrole), SQL_PARAMS_NAMED); 	
 if($config->subcategories == '1') {
 	
-	$totalcourses = $DB->get_records_sql("SELECT {course}.id, {role_assignments}.roleid, Count({role_assignments}.roleid) AS studentsenrolled
-										FROM {user} INNER JOIN (({role_assignments} INNER JOIN {context} ON {role_assignments}.contextid = {context}.id) INNER JOIN ({course} INNER JOIN {course_categories} ON {course}.category = {course_categories}.id) ON {context}.instanceid = {course}.id) ON {user}.id = {role_assignments}.userid
-										GROUP BY {role_assignments}.roleid, {course}.id
-										HAVING ((({role_assignments}.roleid)=5) AND ((Count({role_assignments}.roleid))>= $enrolments))
-										ORDER BY Count({role_assignments}.roleid)");	
+    $sql = "SELECT c.id, ra.roleid, COUNT(ra.roleid) AS studentsenrolled
+            FROM {course} c
+            JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
+            JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
+            WHERE ra.roleid $insql
+            GROUP BY c.id, ra.roleid
+            HAVING COUNT(ra.roleid) > :enrolments"; 
 } else {
 
-	$totalcourses = $DB->get_records_sql("SELECT {course}.id, {role_assignments}.roleid, Count({role_assignments}.roleid) AS studentsenrolled
-										FROM {user} INNER JOIN (({role_assignments} INNER JOIN {context} ON {role_assignments}.contextid = {context}.id) INNER JOIN ({course} INNER JOIN {course_categories} ON {course}.category = {course_categories}.id) ON {context}.instanceid = {course}.id) ON {user}.id = {role_assignments}.userid
-										WHERE ((({course_categories}.depth)=1))
-										GROUP BY {role_assignments}.roleid, {course}.id
-										HAVING ((({role_assignments}.roleid)=5) AND ((Count({role_assignments}.roleid))>= $enrolments))
-										ORDER BY Count({role_assignments}.roleid)");
+    $sql = "SELECT c.id, ra.roleid, COUNT(ra.roleid) AS studentsenrolled, cc.depth
+            FROM {course} c
+            JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
+            JOIN {course_categories} cc ON (cc.id = c.category)
+            JOIN {role_assignments} ra ON (ra.contextid = ctx.id)
+            WHERE ra.roleid $insql AND cc.depth = 1
+            GROUP BY c.id, ra.roleid, cc.depth
+            HAVING COUNT(ra.roleid) > :enrolments";
+}
+$params['enrolments'] = $enrolments;
+$totalcourses = $DB->get_records_sql($sql, $params); 
 								 						 
-}							 
+							 
 
 $total = count($totalcourses);
 
 $gold_total = $DB->count_records('block_gsb', array('gsb'=>'Gold'));
 $silver_total = $DB->count_records('block_gsb', array('gsb'=>'Silver'));
 $bronze_total = $DB->count_records('block_gsb', array('gsb'=>'Bronze'));		
-
+$exclude_total = $DB->count_records('block_gsb', array('gsb'=>'exclude'));	
 $total_medals = $gold_total + $silver_total + $bronze_total;				
-$indev_count = $total - $total_medals ;
+$indev_count = ($total - $total_medals) - $exclude_total ;
 
-if($total_medals >0) {
+if($total_medals >0 && $total > 0) {
 
 	$gold_perc = $gold_total / $total * 100;
 	$gold_perc_form = sprintf ('%01.1f', $gold_perc);
@@ -230,19 +226,19 @@ $table = "<div align='center'>
 							  <td width='100%' colspan='4'><font face='Arial'><h3 align='center'>GSB Summary</h3></font></td>
 							</tr>
 							<tr>
-							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pics/gold_icon.png'></div></td>
+							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pix/gold_icon.png'></div></td>
 							  <td width='35%'><font face='Arial' size='2'><div align='left'>Gold</div></td>
 							  <td width='25%'><font face='Arial' size='2'><div align='left'>" . $gold_total . "</div></td>
 							  <td width='10%'><div align='left'><font face='Arial' size='1'>" . $gold_perc_form . "%</div></td>
 							</tr>
 							<tr>
-							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pics/silver_icon.png'></div></td>
+							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pix/silver_icon.png'></div></td>
 							  <td width='35%'><font face='Arial' size='2'><div align='left'>Silver</div></td>
 							  <td width='25%'><font face='Arial' size='2'><div align='left'>" . $silver_total . "</div></td>
 							  <td width='10%'><div align='left'><font face='Arial' size='1'>" . $silver_perc_form . "%</div></td>
 							</tr>
 							<tr>
-							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pics/bronze_icon.png'></div></td>
+							  <td width='30%'><div align='left'><img src='$CFG->wwwroot/report/gsb/pix/bronze_icon.png'></div></td>
 							  <td width='35%'><font face='Arial' size='2'><div align='left'>Bronze</div></td>
 							  <td width='25%'><font face='Arial' size='2'><div align='left'>" . $bronze_total . "</div></td>
 							  <td width='10%'><div align='left'><font face='Arial' size='1'>" . $bronze_perc_form . "%</div></td>
