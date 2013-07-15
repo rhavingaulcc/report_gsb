@@ -19,7 +19,7 @@
  *
  * @package    report
  * @subpackage GSB
- * @copyright  2012 onwards Richard Havinga richard.havinga@southampton-city.ac.uk
+ * @copyright  2013 onwards Richard Havinga 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ $ADMIN->add('reports', new admin_externalpage('report_gsb',
 
 $selection = array('optional'=>'optional', 'mandatory'=>'mandatory', 'exclude'=>'exclude');
 $count = array('0'=>'0', '1'=>'1', '2'=>'2', '3'=>'3', '4'=>'4', '5'=>'5', '6'=>'6', '7'=>'7', '8'=>'8', '9'=>'9', '10'=>'10', 
-'11'=>'11', '12'=>'12', '13'=>'13', '14'=>'14', '15'=>'15', '16'=>'16');
+'11'=>'11', '12'=>'12', '13'=>'13', '14'=>'14', '15'=>'15', '16'=>'16', '17'=>'17');
 
 
 if ($ADMIN->fulltree) {
@@ -44,13 +44,16 @@ if ($ADMIN->fulltree) {
         get_string('subcategories', 'report_gsb'), get_string('subcategoriesxp', 'report_gsb'), 0));
 
     $settings->add(new admin_setting_configtext('gsb/studentviews', get_string('studentviews', 'report_gsb'),
-                   get_string('studentviewsxp', 'report_gsb'), 20, PARAM_INTEGER));
+                   get_string('studentviewsxp', 'report_gsb'), 0, PARAM_INTEGER));
 
     $settings->add(new admin_setting_configtext('gsb/minenrolments', get_string('minenrolments', 'report_gsb'),
-                   get_string('minenrolmentsxp', 'report_gsb'), 2, PARAM_INTEGER));
+                   get_string('minenrolmentsxp', 'report_gsb'), 1, PARAM_INTEGER));
 
     $settings->add(new admin_setting_configcheckbox('gsb/automedal',
         get_string('automedal', 'report_gsb'), get_string('automedalxp', 'report_gsb'), 0));
+		
+	$settings->add(new admin_setting_pickroles('gsb/studentrole', get_string('roles'),
+                        '', array('student'))); 	
 
     //--- bronze settings -----------------------------------------------------------------------------------
 	
@@ -63,9 +66,34 @@ if ($ADMIN->fulltree) {
 							
     $settings->add(new admin_setting_configselect('gsb/bronzeresourcestype', get_string('configbronzeresources', 'report_gsb'),
                        get_string('configbronzeresourcesxp', 'report_gsb'), 'mandatory', $selection));
+					   
 
     $settings->add(new admin_setting_configtext('gsb/bronzeresources', get_string('bronzeresources', 'report_gsb'),
                    get_string('configdefaultbronzeresources', 'report_gsb'), 20, PARAM_INTEGER));
+				   
+    $settings->add(new admin_setting_configselect('gsb/bronzelabelstype', get_string('configbronzelabels', 'report_gsb'),
+                       get_string('configbronzelabelsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/bronzelabels', get_string('bronzelabels', 'report_gsb'),
+                   get_string('configdefaultbronzelabels', 'report_gsb'), 0, PARAM_INTEGER));			
+
+    $settings->add(new admin_setting_configselect('gsb/bronzefolderstype', get_string('configbronzefolders', 'report_gsb'),
+                       get_string('configbronzefoldersxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/bronzefolders', get_string('bronzefolders', 'report_gsb'),
+                   get_string('configdefaultbronzefolders', 'report_gsb'), 0, PARAM_INTEGER));		
+
+    $settings->add(new admin_setting_configselect('gsb/bronzeheadingstype', get_string('configbronzeheadings', 'report_gsb'),
+                       get_string('configbronzeheadingsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configcheckbox('gsb/bronzeheadings', get_string('bronzeheadings', 'report_gsb'),
+                   get_string('configdefaultbronzeheadings', 'report_gsb'), 0));			
+
+    $settings->add(new admin_setting_configselect('gsb/bronzeurlstype', get_string('configbronzeurls', 'report_gsb'),
+                       get_string('configbronzeurlsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/bronzeurls', get_string('bronzeurls', 'report_gsb'),
+                   get_string('configdefaultbronzeurls', 'report_gsb'), 0, PARAM_INTEGER));							   
 				   
     $settings->add(new admin_setting_configselect('gsb/bronzeassignmentstype', get_string('configbronzeassignments', 'report_gsb'),
                        get_string('configbronzeassignmentsxp', 'report_gsb'), 'exclude', $selection));
@@ -165,6 +193,30 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext('gsb/silverresources', get_string('silverresources', 'report_gsb'),
                    get_string('configdefaultsilverresources', 'report_gsb'), 20, PARAM_INTEGER));
+
+   $settings->add(new admin_setting_configselect('gsb/silverlabelstype', get_string('configsilverlabels', 'report_gsb'),
+                       get_string('configsilverlabelsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/silverlabels', get_string('silverlabels', 'report_gsb'),
+                   get_string('configdefaultsilverlabels', 'report_gsb'), 0, PARAM_INTEGER));			
+
+    $settings->add(new admin_setting_configselect('gsb/silverfolderstype', get_string('configsilverfolders', 'report_gsb'),
+                       get_string('configsilverfoldersxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/silverfolders', get_string('silverfolders', 'report_gsb'),
+                   get_string('configdefaultsilverfolders', 'report_gsb'), 0, PARAM_INTEGER));		
+
+    $settings->add(new admin_setting_configselect('gsb/silverheadingstype', get_string('configsilverheadings', 'report_gsb'),
+                       get_string('configsilverheadingsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configcheckbox('gsb/silverheadings', get_string('silverheadings', 'report_gsb'),
+                   get_string('configdefaultsilverheadings', 'report_gsb'), 0));			
+
+    $settings->add(new admin_setting_configselect('gsb/silverurlstype', get_string('configsilverurls', 'report_gsb'),
+                       get_string('configsilverurlsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/silverurls', get_string('silverurls', 'report_gsb'),
+                   get_string('configdefaultsilverurls', 'report_gsb'), 0, PARAM_INTEGER));				
 				   
     $settings->add(new admin_setting_configselect('gsb/silverassignmentstype', get_string('configsilverassignments', 'report_gsb'),
                        get_string('configsilverassignmentsxp', 'report_gsb'), 'optional', $selection));
@@ -258,12 +310,36 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('gsb/goldnumoptional', get_string('goldnumoptional', 'report_gsb'),
                             get_string('goldnumoptionalxp', 'report_gsb'),
                             '1', $count));
-							
+					
     $settings->add(new admin_setting_configselect('gsb/goldresourcestype', get_string('configgoldresources', 'report_gsb'),
                        get_string('configgoldresourcesxp', 'report_gsb'), 'exclude', $selection));
 
     $settings->add(new admin_setting_configtext('gsb/goldresources', get_string('goldresources', 'report_gsb'),
                    get_string('configdefaultgoldresources', 'report_gsb'), 20, PARAM_INTEGER));
+
+   $settings->add(new admin_setting_configselect('gsb/goldlabelstype', get_string('configgoldlabels', 'report_gsb'),
+                       get_string('configgoldlabelsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/goldlabels', get_string('goldlabels', 'report_gsb'),
+                   get_string('configdefaultgoldlabels', 'report_gsb'), 0, PARAM_INTEGER));			
+
+    $settings->add(new admin_setting_configselect('gsb/goldfolderstype', get_string('configgoldfolders', 'report_gsb'),
+                       get_string('configgoldfoldersxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/goldfolders', get_string('goldfolders', 'report_gsb'),
+                   get_string('configdefaultgoldfolders', 'report_gsb'), 0, PARAM_INTEGER));		
+
+    $settings->add(new admin_setting_configselect('gsb/goldheadingstype', get_string('configgoldheadings', 'report_gsb'),
+                       get_string('configgoldheadingsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configcheckbox('gsb/goldheadings', get_string('goldheadings', 'report_gsb'),
+                   get_string('configdefaultgoldheadings', 'report_gsb'), 0));			
+
+    $settings->add(new admin_setting_configselect('gsb/goldurlstype', get_string('configgoldurls', 'report_gsb'),
+                       get_string('configgoldurlsxp', 'report_gsb'), 'exclude', $selection));
+
+    $settings->add(new admin_setting_configtext('gsb/goldurls', get_string('goldurls', 'report_gsb'),
+                   get_string('configdefaultgoldurls', 'report_gsb'), 0, PARAM_INTEGER));				
 				   
     $settings->add(new admin_setting_configselect('gsb/goldassignmentstype', get_string('configgoldassignments', 'report_gsb'),
                        get_string('configgoldassignmentsxp', 'report_gsb'), 'exclude', $selection));
@@ -347,7 +423,9 @@ if ($ADMIN->fulltree) {
                        get_string('configgoldglossaryxp', 'report_gsb'), 'optional', $selection));				   
 				   				   
     $settings->add(new admin_setting_configtext('gsb/goldglossary', get_string('goldglossary', 'report_gsb'),
-                   get_string('configdefaultgoldglossary', 'report_gsb'), 1, PARAM_INTEGER));				   
+                   get_string('configdefaultgoldglossary', 'report_gsb'), 1, PARAM_INTEGER));		
+
+			   
 				  
 }
 
