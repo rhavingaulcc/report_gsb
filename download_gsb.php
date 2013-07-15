@@ -1,6 +1,28 @@
 <?php
 
-//Written by Richard Havinga @ Southampton City College
+// This file is part of GSB module for Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Version info for GSB Report
+ *
+ * @package    report
+ * @subpackage GSB
+ * @copyright  2013 onwards Richard Havinga 
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once (dirname(__FILE__) . '/../../lib/adminlib.php');
@@ -35,14 +57,14 @@ function objectToArray($select) {
 		}
 	}
 	
-$sql = "SELECT {block_gsb}.id, {course_categories}.name as category, {course}.fullname as coursename, {course}.shortname, {block_gsb}.linksnum, {block_gsb}.assignmentnum, 
-		{block_gsb}.feedbacknum, {block_gsb}.questnum, {block_gsb}.quiznum, {block_gsb}.interactnum as interactive_learning_objects, {block_gsb}.embednum as embedded_videos, 
-		{block_gsb}.booknum, {block_gsb}.databasenum, {block_gsb}.workshopnum, {block_gsb}.choicenum, {block_gsb}.glossarynum, 
-		{block_gsb}.wikinum, {block_gsb}.chatnum, {block_gsb}.forumnum, {block_gsb}.gsb 
-		FROM ({block_gsb} INNER JOIN {course} ON {block_gsb}.ids = {course}.id) INNER JOIN {course_categories} ON {course}.category = {course_categories}.id
-		ORDER by name ASC;"; 
-		
-//		Modification removal from $sql to satisfy SQL SERVER GROUP BY {block_gsb}.id		
+$sql = "SELECT bgc.id, cc.name as category, c.fullname as coursename, c.shortname, bgc.linksnum AS resources, bgc.assignmentnum,
+bgc.feedbacknum, bgc.questnum, bgc.quiznum, bgc.interactnum as interactive_learning_objects, bgc.embednum as embedded_videos,
+bgc.booknum, bgc.databasenum, bgc.workshopnum, bgc.choicenum, bgc.glossarynum,
+bgc.wikinum, bgc.chatnum, bgc.forumnum, bgc.foldersnum, bgc.urlsnum, bgc.gsb
+FROM {block_gsb} bgc
+JOIN {course} c ON bgc.ids = c.id
+JOIN {course_categories} cc ON c.category = cc.id
+ORDER by name ASC;";
 $select = $DB->get_records_sql($sql);
 
 $array = objectToArray($select);	
