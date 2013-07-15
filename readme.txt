@@ -1,4 +1,4 @@
-Written by: Richard Havinga 2012 richard.havinga@southampton-city.ac.uk
+Written by: Richard Havinga 2012 
 
 ----------------------------------------------------------------------------------------
 
