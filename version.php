@@ -24,11 +24,11 @@
  */
 defined('MOODLE_INTERNAL') || die();
 //version number changes
-$plugin->version  = 2013013004;
+$plugin->version  = 2013071500;
 $plugin->requires = 2011120100;
 $plugin->component = 'report_gsb';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '2.2.0';
 $plugin->dependencies   = array (
-    'block_gsb'   => 2012103000,          // Needs the GSB block
+    'block_gsb'   => 2013071500,          // Needs the GSB block
 );
