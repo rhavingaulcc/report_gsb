@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
 require_login();
 
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('report/gsb:viewmygsbreport', $context);
 
 
@@ -69,9 +69,15 @@ $select = $DB->get_records_sql($sql);
 
 $array = objectToArray($select);	
 
-header("Content-type: application/octet-stream"); 
+
+header("Content-type: text//octet-stream"); 
 header("Content-Disposition: attachment; filename=gsb_report.xls"); 
-$flag = false; foreach($array as $row) { if(!$flag) {
+$flag = false; 
+
+foreach($array as $row) { if(!$flag) {
  // display field/column names as first row 
- echo implode("\t", array_keys($row)) . "\r\n"; $flag = true; } echo implode("\t", array_values($row)) . "\r\n"; } exit;
+ echo implode("\t", array_keys($row)) . "\r\n"; $flag = true; 
+ 
+ }
+ echo implode("\t", array_values($row)) . "\r\n"; } exit;
 
