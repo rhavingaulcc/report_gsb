@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_login();
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('report/gsb:viewmygsbreport', $context);
 
 global $DB, $CFG;
