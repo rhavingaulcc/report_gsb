@@ -52,11 +52,11 @@ $config = get_config('gsb');
 	//Once medals are set from gsb_by_department.php
 if (ISSET($submitted)) {
 
-	$sql = "SELECT c.id, g.gsboverride 
+	$sql = "SELECT DISTINCT c.id, g.gsboverride 
 	FROM {course}, {block_gsb} g JOIN {course} c ON c.id = g.ids 
 	WHERE {course}.category = " . $categoryid . " ";
-	$get_dept_codes = $DB->get_records_sql($sql);
 
+	$get_dept_codes = $DB->get_records_sql($sql);
 
 	foreach($get_dept_codes as $row => $values) {
 
