@@ -24,10 +24,10 @@
  */
 
 
-$string['pluginname'] = 'GSB Medals';
+$string['pluginname'] = 'Medals';
 $string['gsb:viewmygsbreport'] = 'View the Gold, Silver, Bronze Course Medal';
-$string['gsbadmin'] = 'GSB Report';
-$string['gsbdepartment'] = 'Gold, Silver, Bronze Moderation Page';
+$string['gsbadmin'] = 'Medals Report';
+$string['gsbdepartment'] = 'Medals Moderation';
 $string['title'] = 'title';
 $string['subcategories'] = 'Include Sub Categories';
 $string['subcategoriesxp'] = 'Do you want to include sub categories when awarding medals?';
