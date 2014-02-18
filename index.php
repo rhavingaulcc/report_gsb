@@ -49,12 +49,23 @@ $config = get_config('gsb');
 	$categoryid = $_POST['categoryid'];
 }
 
+if(isset($_POST['all'])){
+	$submitted = $_POST['submit2'];
+
+}	
+
 	//Once medals are set from gsb_by_department.php
 if (ISSET($submitted)) {
 
+if(isset($categoryid)){
 	$sql = "SELECT DISTINCT c.id, g.gsboverride 
 	FROM {course}, {block_gsb} g JOIN {course} c ON c.id = g.ids 
 	WHERE {course}.category = " . $categoryid . " ";
+
+}else{
+	$sql = "SELECT DISTINCT c.id, g.gsboverride 
+	FROM {course}, {block_gsb} g JOIN {course} c ON c.id = g.ids";
+}
 
 	$get_dept_codes = $DB->get_records_sql($sql);
 
@@ -125,8 +136,11 @@ if (ISSET($submitted)) {
 		}
 	}
 	
-
+if(isset($categoryid)){
 	echo "<h3><font face='Arial' color='#FF0000'>Gsb medals have been processed for </font><font face='Arial' color='#0000FF'>$course</font></h3>";
+}else{
+	echo "<h3><font face='Arial' color='#FF0000'>Gsb medals have been processed for </font><font face='Arial' color='#0000FF'>All Courses</font></h3>";
+}
 	echo "<a href='javascript:location.reload(true)'>Refresh this page</a>";
 
 }
@@ -140,7 +154,7 @@ if($config->subcategories == '1') {
 
 $params = array(1);
 $get_dept_codes = $DB->get_records_sql_menu($sql,$params);
-
+echo "</br></br><a href='$CFG->wwwroot/report/gsb/process_all.php' title='process all medals'>Process All Courses</a></br></br>";
 echo "<form method='POST' action='$CFG->wwwroot/report/gsb/gsb_by_department.php'><p>";
 echo "<select size='1' name='dept'>";
 
@@ -177,20 +191,17 @@ if($config->subcategories == '1') {
             HAVING COUNT(ra.roleid) > :enrolments";
 }
 $params['enrolments'] = $enrolments;
-$totalcourses = $DB->get_records_sql($sql, $params); 
-								 						 
-							 
-
+$sql = "SELECT * FROM mdl_block_gsb WHERE gsb != 'Exclude'";
+$totalcourses = $DB->get_records_sql($sql); 
 $total = count($totalcourses);
 
 $gold_total = $DB->count_records('block_gsb', array('gsb'=>'Gold'));
 $silver_total = $DB->count_records('block_gsb', array('gsb'=>'Silver'));
 $bronze_total = $DB->count_records('block_gsb', array('gsb'=>'Bronze'));		
-$exclude_total = $DB->count_records('block_gsb', array('gsb'=>'exclude'));	
-$total_medals = $gold_total + $silver_total + $bronze_total;				
-$indev_count = ($total - $total_medals) - $exclude_total ;
+$indev_total = $DB->count_records('block_gsb', array('gsb'=>'In Dev'));		
+$exclude_total = $DB->count_records('block_gsb', array('gsb'=>'Exclude'));	
 
-if($total_medals >0 && $total > 0) {
+if($total > 0) {
 
 	$gold_perc = $gold_total / $total * 100;
 	$gold_perc_form = sprintf ('%01.1f', $gold_perc);
@@ -201,7 +212,7 @@ if($total_medals >0 && $total > 0) {
 	$bronze_perc = $bronze_total / $total *100;
 	$bronze_perc_form = sprintf ('%01.1f', $bronze_perc);
 
-	$indev_perc = $indev_count / $total *100;
+	$indev_perc = $indev_total / $total *100;
 	$indev_perc_form = sprintf ('%01.1f', $indev_perc);
 	
 } else {
@@ -209,11 +220,8 @@ if($total_medals >0 && $total > 0) {
 	$gold_perc_form = 0;
 	$silver_perc_form = 0;
 	$bronze_perc_form = 0;
-	$indev_perc_form = 0;
-	
+	$indev_perc_form = 0;	
 }
-		
-$total = $gold_total + $silver_total + $bronze_total + $indev_count;
 
 $table = "<div align='center'>
 			<table style='text-align: left; width: 20%;' border='0' cellpadding='2' cellspacing='2'>
@@ -246,7 +254,7 @@ $table = "<div align='center'>
 							<tr>
 							  <td width='30%'>&nbsp;</td>
 							  <td width='35%'><font face='Arial' size='2'><div align='left'>In Dev</div></td>
-							  <td width='25%'><font face='Arial' size='2'><div align='left'>" . $indev_count . "</div></td>
+							  <td width='25%'><font face='Arial' size='2'><div align='left'>" . $indev_total . "</div></td>
 							  <td width='10%'><div align='left'><font face='Arial' size='1'>" . $indev_perc_form . "%</div></td>
 							</tr>
 								  </table>
